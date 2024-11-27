@@ -82,6 +82,9 @@ let checkHand = async function (bot: Bot, name: string): Promise<void> {
                 await bot.equip(item, 'hand')
                 flag = true
             }
+            if (item.name !== 'bone_meal' && item.name !== 'cherry_sapling') {
+                await bot.tossStack(item)
+            }
         }
         if (!flag) {
             let errCntNow = errCnt.get(name)
@@ -90,6 +93,7 @@ let checkHand = async function (bot: Bot, name: string): Promise<void> {
             }
             ++errCntNow;
             errCnt.set(name, errCntNow)
+            consola.log('errCntNow:', errCntNow)
 
             if (errCntNow > 50) {
                 consola.error(`No ${name} in inventory, stopping tree factory.`)
@@ -147,13 +151,14 @@ async function plantTree(bot: Bot, coords: any): Promise<void> {
 
 // Command handler for "tree start"
 export async function handleStart(bot: Bot): Promise<void> {
-    errCnt.set('sapling', 0)
-    errCnt.set('bone', 0)
+    errCnt.set('cherry_sapling', 0)
+    errCnt.set('bone_meal', 0)
     if (treePlacingInterval) {
         consola.warn('Block placing task is already running.')
         bot.chat('Block placing task is already running.')
         return
     }
+    consola.log(bot.inventory.slots)
     const coords = loadCoordinates()
     if (!coords.stand) {
         consola.warn('No stand position set.')
