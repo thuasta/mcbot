@@ -3,6 +3,8 @@ import 'dotenv/config'
 import mineflayer from 'mineflayer'
 import pathfinder from 'mineflayer-pathfinder'
 
+import { mineflayer as mineflayerViewer } from 'prismarine-viewer'
+
 interface Env {
   MC_HOST: string
   MC_USERNAME: string
@@ -24,6 +26,7 @@ async function main (): Promise<void> {
     username: env.MC_USERNAME,
     auth: env.MC_AUTH
   })
+ 
 
   bot.loadPlugin(pathfinder.pathfinder)
 
@@ -33,6 +36,7 @@ async function main (): Promise<void> {
     movement.allow1by1towers = true
     movement.allowFreeMotion = true
     bot.pathfinder.setMovements(movement)
+    mineflayerViewer(bot, { port: 3007, firstPerson: true }) // port is the minecraft server port, if first person is false, you get a bird's-eye view
   })
 
   bot.on('whisper', async (username: string, message: string) => {
